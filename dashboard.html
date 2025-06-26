@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Loosh.ai | Research Partner Dashboard</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Chart.js for data visualization -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
+    
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        /* Base styles */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-image: url('https://placehold.co/2000x1200/0a0a2a/e0e0e0?text=');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+        }
+
+        /* Glassmorphism class */
+        .glass {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-radius: 1rem;
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+        }
+
+        /* Custom scrollbar for better aesthetics */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.5);
+        }
+
+        /* Chart.js Global Font Settings */
+        Chart.defaults.font.family = "'Inter', sans-serif";
+        Chart.defaults.color = '#E0E0E0';
+    </style>
+</head>
+<body class="bg-gray-900 text-white p-4 sm:p-6 lg:p-8">
+
+    <div class="max-w-7xl mx-auto">
+
+        <!-- Header -->
+        <header class="text-center mb-8">
+            <h1 class="text-4xl md:text-5xl font-extrabold tracking-tight">Loosh.ai Research Partner Dashboard</h1>
+            <p class="text-lg text-gray-300 mt-2">Quantifying Consciousness, Together</p>
+        </header>
+
+        <!-- Main Dashboard Grid -->
+        <div class="grid grid-cols-12 gap-6">
+
+            <!-- Left Column: Filters & Metrics -->
+            <div class="col-span-12 lg:col-span-3 space-y-6">
+                <!-- Welcome Card -->
+                <div id="welcome-card" class="glass p-5">
+                    <h2 class="text-xl font-bold mb-2">Welcome</h2>
+                    <p class="text-gray-300 text-sm">This dashboard demonstrates our capability to move from anecdote to analysis. Use the filters below to explore the data.</p>
+                </div>
+
+                <!-- Global Metrics -->
+                <div id="metrics-card" class="glass p-5">
+                    <h3 class="text-lg font-bold mb-4">Global Metrics</h3>
+                    <div class="space-y-3 text-sm">
+                        <div class="flex justify-between"><span>Total Experiences:</span> <strong id="total-experiences" class="text-teal-300">0</strong></div>
+                        <div class="flex justify-between"><span>Hours Logged:</span> <strong id="hours-logged" class="text-teal-300">0</strong></div>
+                        <div class="flex justify-between"><span>Active Explorers:</span> <strong id="active-explorers" class="text-teal-300">0</strong></div>
+                    </div>
+                </div>
+
+                <!-- Filters -->
+                <div id="filters-card" class="glass p-5">
+                    <h3 class="text-lg font-bold mb-4">Explorer Filters</h3>
+                    <div class="space-y-4">
+                        <div>
+                            <label class="font-semibold text-sm">Technique</label>
+                            <div id="technique-filters" class="mt-2 space-y-1 text-sm"></div>
+                        </div>
+                        <div>
+                            <label class="font-semibold text-sm">Reported Phenomenon</label>
+                            <div id="phenomenon-filters" class="mt-2 space-y-1 text-sm"></div>
+                        </div>
+                        <div>
+                            <label for="intensity-slider" class="font-semibold text-sm">Min Experience Intensity: <span id="intensity-value">0</span></label>
+                            <input id="intensity-slider" type="range" min="0" max="10" value="0" class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column: Visualizations -->
+            <div class="col-span-12 lg:col-span-9 space-y-6">
+                
+                <!-- Consciousness State-Space View -->
+                <div class="glass p-5">
+                    <h3 class="text-xl font-bold mb-2">Consciousness State-Space View</h3>
+                    <p class="text-sm text-gray-400 mb-4">Each bubble is a session. X-Axis: Theta Power, Y-Axis: Gamma Power, Size: Experience Intensity.</p>
+                    <div class="h-96">
+                        <canvas id="state-space-chart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Correlated Data Section -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- EEG & Biometrics -->
+                    <div class="glass p-5">
+                        <h3 class="text-xl font-bold mb-2">Aggregate Neuro-Biometrics</h3>
+                        <p class="text-sm text-gray-400 mb-4">Average values for the filtered selection.</p>
+                        <div class="h-72">
+                            <canvas id="biometrics-chart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Subjective Experience Cloud -->
+                    <div class="glass p-5">
+                        <h3 class="text-xl font-bold mb-2">Subjective Experience Cloud</h3>
+                        <p class="text-sm text-gray-400 mb-4">Commonly used words in narrative logs.</p>
+                        <div id="word-cloud" class="h-72 flex flex-wrap items-center justify-center gap-2 overflow-y-auto">
+                            <!-- Words will be injected here -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Call to Action -->
+                <div class="glass p-6 text-center">
+                    <h2 class="text-2xl font-bold mb-3">Ready for a Deeper Collaboration?</h2>
+                    <p class="text-gray-300 mb-6">Let's move from insight to joint research. We can provide sandbox access to our full dataset and co-develop studies to unlock the next frontier of consciousness exploration.</p>
+                    <div class="flex justify-center gap-4">
+                        <button class="bg-teal-500 hover:bg-teal-600 text-white font-bold py-2 px-4 rounded-lg transition duration-300">Schedule a Live Demo</button>
+                        <button class="bg-gray-700 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded-lg transition duration-300">Request Sandbox Access</button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+<script>
+// --- DATA INITIALIZATION ---
+// In a real application, this would be fetched from an API.
+const csvData = `SessionID,UserID,Timestamp,Technique,ReportedPhenomenon,ExperienceIntensity,NarrativeLog,EEG_Theta,EEG_Gamma,HRV_Coherence,GSR_Fluctuation,Age,ExperienceLevel
+1,UserA,2025-06-25T22:10:00Z,"Binaural Beats (e.g., Hemi-Sync)",Out-of-Body Experience (OBE),9,"Felt a strong vibration, then a sensation of floating above my body. Clear view of my room.",7.8,42.1,0.65,0.12,34,Advanced
+2,UserB,2025-06-25T22:15:00Z,Guided Meditation,Deep Peace / Bliss,8,"Complete silence in my mind. A feeling of warmth and connection to everything.",6.2,25.5,0.91,0.05,45,Intermediate
+3,UserC,2025-06-25T22:20:00Z,Silent / Mindfulness,Ego Dissolution,7,"The sense of 'I' dissolved. It was just awareness without a center.",7.1,38.9,0.78,0.21,29,Intermediate
+4,UserD,2025-06-25T22:25:00Z,Intention Setting,Non-Local Perception / Remote Viewing,6,"Focused on a friend's house and got a clear image of their new red couch. Verified later.",8.1,45.3,0.71,0.15,52,Advanced
+5,UserE,2025-06-25T22:30:00Z,"Binaural Beats (e.g., Hemi-Sync)",Deep Peace / Bliss,7,"Felt very heavy and relaxed. No thoughts, just calm.",5.9,28.4,0.88,0.08,38,Beginner
+6,UserA,2025-06-24T21:00:00Z,Silent / Mindfulness,Deep Peace / Bliss,6,"Struggled to focus initially, but found a pocket of deep quiet for about 10 minutes.",5.5,24.1,0.82,0.11,34,Advanced
+7,UserF,2025-06-24T21:05:00Z,Psychedelic Experience,Ego Dissolution,10,"Total merging with the music and visuals. Lost all sense of self.",8.5,48.2,0.60,0.35,25,Intermediate
+8,UserG,2025-06-24T21:10:00Z,"Binaural Beats (e.g., Hemi-Sync)",Out-of-Body Experience (OBE),8,"Partial separation. Felt my legs lift out of my physical body but couldn't detach completely.",7.5,41.5,0.68,0.14,41,Intermediate
+9,UserH,2025-06-24T21:15:00Z,Guided Meditation,Lucid Dreaming,7,"Became aware I was dreaming while flying over a city. Took control and explored.",6.8,33.1,0.75,0.18,22,Beginner
+10,UserB,2025-06-24T21:20:00Z,Intention Setting,Deep Peace / Bliss,8,"Set an intention for clarity. Received a profound sense of acceptance.",6.5,29.8,0.92,0.06,45,Intermediate
+11,UserI,2025-06-23T20:00:00Z,"Binaural Beats (e.g., Hemi-Sync)",Out-of-Body Experience (OBE),9,"Classic OBE. Floated to the ceiling. It felt more real than normal reality. Vibrations were intense beforehand.",7.9,43.0,0.66,0.13,37,Advanced
+12,UserJ,2025-06-23T20:05:00Z,Guided Meditation,Deep Peace / Bliss,7,"The narrator's voice was very soothing. I felt a wave of calm wash over me.",6.1,26.2,0.89,0.07,50,Beginner
+13,UserK,2025-06-23T20:10:00Z,Silent / Mindfulness,None,3,"Mind was very busy today. Couldn't settle down. A lot of distractions.",4.2,21.3,0.55,0.25,31,Intermediate
+14,UserL,2025-06-23T20:15:00Z,Intention Setting,Non-Local Perception / Remote Viewing,5,"Attempted to perceive a target image. Saw flashes of blue and geometric shapes. Target was a blue star.",7.7,40.1,0.73,0.17,48,Advanced
+15,UserM,2025-06-23T20:20:00Z,"Binaural Beats (e.g., Hemi-Sync)",Lucid Dreaming,8,"The audio track induced a dream state where I was instantly lucid. Very effective.",6.9,35.4,0.77,0.16,28,Intermediate
+16,UserN,2025-06-22T19:00:00Z,Psychedelic Experience,Ego Dissolution,9,"A challenging but ultimately rewarding experience. The boundaries between me and the universe dissolved completely.",8.2,46.5,0.62,0.33,33,Advanced
+17,UserO,2025-06-22T19:05:00Z,"Binaural Beats (e.g., Hemi-Sync)",Out-of-Body Experience (OBE),10,"Full separation. Traveled to my kitchen and saw the clock read 10:30 PM. It was accurate. Mind-blowing.",8.0,44.2,0.64,0.12,29,Advanced
+18,UserP,2025-06-22T19:10:00Z,Guided Meditation,Deep Peace / Bliss,8,"Felt a profound sense of stillness, like the bottom of a deep lake. Very restorative.",6.3,27.9,0.94,0.04,55,Intermediate
+19,UserQ,2025-06-22T19:15:00Z,Silent / Mindfulness,Ego Dissolution,6,"For a brief moment, the constant internal chatter stopped. There was just presence.",7.0,37.8,0.79,0.22,42,Intermediate
+20,UserR,2025-06-22T19:20:00Z,Intention Setting,Deep Peace / Bliss,7,"Focused on gratitude and felt an overwhelming wave of love and peace.",6.4,28.8,0.90,0.06,36,Beginner
+21,UserS,2025-06-21T18:00:00Z,"Binaural Beats (e.g., Hemi-Sync)",Lucid Dreaming,9,"The sounds created a vivid dreamscape. I was able to ask my subconscious questions directly.",7.2,36.1,0.76,0.15,31,Advanced
+22,UserT,2025-06-21T18:05:00Z,Silent / Mindfulness,None,4,"Physical discomfort was a major distraction. Couldn't find a good rhythm.",4.5,22.5,0.61,0.23,27,Beginner
+23,UserA,2025-06-21T18:10:00Z,Intention Setting,Non-Local Perception / Remote Viewing,7,"During the session, I had a sudden thought about my sister. She called me the moment I finished.",8.3,47.1,0.70,0.16,34,Advanced
+24,UserB,2025-06-21T18:15:00Z,"Binaural Beats (e.g., Hemi-Sync)",Out-of-Body Experience (OBE),8,"Felt the electric vibrations but couldn't fully separate. It was like being stuck in molasses.",7.4,40.8,0.69,0.15,45,Intermediate
+25,UserC,2025-06-21T18:20:00Z,Guided Meditation,Deep Peace / Bliss,9,"One of the deepest meditations I've had. Time seemed to stop.",6.6,29.1,0.95,0.03,29,Intermediate
+26,UserU,2025-06-20T17:00:00Z,Silent / Mindfulness,Deep Peace / Bliss,8,"The world melted away. Just pure being. Incredibly peaceful.",6.0,25.0,0.93,0.05,48,Advanced
+27,UserV,2025-06-20T17:05:00Z,Psychedelic Experience,Out-of-Body Experience (OBE),9,"The experience was indistinguishable from a spontaneous OBE. I was a point of awareness observing the room.",7.9,43.5,0.67,0.28,30,Intermediate
+28,UserW,2025-06-20T17:10:00Z,"Binaural Beats (e.g., Hemi-Sync)",None,5,"Felt relaxed, but no specific phenomena. Just a nice calming session.",5.2,23.8,0.80,0.10,24,Beginner
+29,UserX,2025-06-20T17:15:00Z,Intention Setting,Lucid Dreaming,7,"Set an intention to become lucid, and had a short but very vivid lucid dream later that night.",6.7,34.5,0.74,0.17,39,Intermediate
+30,UserY,2025-06-20T17:20:00Z,Guided Meditation,Deep Peace / Bliss,8,"Felt connected to a universal energy. Very profound.",6.4,28.5,0.91,0.06,60,Advanced
+31,UserZ,2025-06-19T16:00:00Z,"Binaural Beats (e.g., Hemi-Sync)",Out-of-Body Experience (OBE),9,"Listened to the Hemi-Sync track and popped out of my body almost instantly. Explored my house.",7.8,42.5,0.66,0.13,35,Advanced
+32,UserAA,2025-06-19T16:05:00Z,Silent / Mindfulness,Ego Dissolution,8,"The boundary between my body and the chair I was sitting on blurred and then disappeared.",7.3,39.5,0.78,0.20,41,Intermediate
+33,UserBB,2025-06-19T16:10:00Z,Guided Meditation,None,4,"The guide's voice was a bit grating. Couldn't get into it.",4.8,23.1,0.65,0.19,26,Beginner
+34,UserCC,2025-06-19T16:15:00Z,Intention Setting,Non-Local Perception / Remote Viewing,8,"Received a very clear image of the Eiffel Tower. The target, unknown to me, was a picture of Paris.",8.4,46.8,0.72,0.15,54,Advanced
+35,UserDD,2025-06-19T16:20:00Z,"Binaural Beats (e.g., Hemi-Sync)",Deep Peace / Bliss,7,"The sounds were like a warm blanket for my brain. Total relaxation.",5.9,27.5,0.89,0.08,32,Intermediate
+36,UserEE,2025-06-18T15:00:00Z,Psychedelic Experience,Ego Dissolution,10,"There was no 'me' to experience anything. Just pure, unadulterated existence. Words fail.",8.8,49.1,0.58,0.38,28,Advanced
+37,UserFF,2025-06-18T15:05:00Z,Guided Meditation,Lucid Dreaming,8,"The meditation led seamlessly into a dream state where I was fully aware and in control.",7.0,34.8,0.76,0.17,37,Intermediate
+38,UserGG,2025-06-18T15:10:00Z,"Binaural Beats (e.g., Hemi-Sync)",Out-of-Body Experience (OBE),9,"Vibrations started in my feet and moved up my body until I just lifted out. It was smooth and effortless.",7.9,43.2,0.65,0.12,44,Advanced
+39,UserHH,2025-06-18T15:15:00Z,Silent / Mindfulness,Deep Peace / Bliss,9,"Achieved a state of 'samadhi'. Complete absorption and bliss. Lasted for what felt like an eternity.",6.7,30.1,0.96,0.02,58,Advanced
+40,UserII,2025-06-18T15:20:00Z,Intention Setting,None,5,"Felt focused during the intention setting, but didn't notice any specific outcome or feeling afterwards.",5.5,24.5,0.75,0.14,31,Beginner
+41,UserJJ,2025-06-17T14:00:00Z,"Binaural Beats (e.g., Hemi-Sync)",Out-of-Body Experience (OBE),8,"Felt the characteristic 'popping' sensation as I left my body. The experience was a bit short, though.",7.6,41.9,0.67,0.14,29,Intermediate
+42,UserKK,2025-06-17T14:05:00Z,Guided Meditation,Deep Peace / Bliss,8,"A very emotional session. Felt a release of old grief, followed by profound peace.",6.2,28.1,0.92,0.07,46,Intermediate
+43,UserLL,2025-06-17T14:10:00Z,Silent / Mindfulness,Ego Dissolution,7,"My sense of self became porous, like a sponge. I could feel the room breathing with me.",7.2,38.5,0.79,0.21,33,Advanced
+44,UserMM,2025-06-17T14:15:00Z,Intention Setting,Non-Local Perception / Remote Viewing,6,"I tried to perceive a symbol in another room. I drew a circle with a dot, which was correct.",7.9,44.8,0.71,0.16,51,Advanced
+45,UserNN,2025-06-17T14:20:00Z,"Binaural Beats (e.g., Hemi-Sync)",Lucid Dreaming,7,"The audio track helped me maintain lucidity in a dream for much longer than usual.",6.8,35.8,0.78,0.16,27,Intermediate
+46,UserOO,2025-06-16T13:00:00Z,Psychedelic Experience,Deep Peace / Bliss,9,"The comedown was incredibly gentle and blissful. A feeling of being perfectly okay with everything.",6.5,31.2,0.85,0.15,36,Intermediate
+47,UserPP,2025-06-16T13:05:00Z,"Binaural Beats (e.g., Hemi-Sync)",Out-of-Body Experience (OBE),10,"One of the most profound experiences of my life. I felt I was pure consciousness, free from the body.",8.1,45.0,0.63,0.11,40,Advanced
+48,UserQQ,2025-06-16T13:10:00Z,Guided Meditation,None,3,"Too tired. I think I just fell asleep five minutes in.",4.1,20.5,0.58,0.15,23,Beginner
+49,UserRR,2025-06-16T13:15:00Z,Silent / Mindfulness,Deep Peace / Bliss,8,"My breathing became incredibly slow and deep. I felt rooted to the earth.",5.8,26.5,0.94,0.04,49,Advanced
+50,UserSS,2025-06-16T13:20:00Z,Intention Setting,Lucid Dreaming,7,"Set an intention to meet a specific person in my dream, and it happened. We had a conversation.",6.9,35.0,0.75,0.18,38,Intermediate
+51,UserTT,2025-06-15T12:00:00Z,"Binaural Beats (e.g., Hemi-Sync)",Out-of-Body Experience (OBE),9,"The binaural beats are key. They create the vibrational state needed for separation.",7.8,42.8,0.66,0.13,31,Advanced
+52,UserUU,2025-06-15T12:05:00Z,Guided Meditation,Deep Peace / Bliss,8,"Felt like I was floating in a warm ocean. All my anxieties dissolved.",6.3,27.7,0.92,0.05,53,Intermediate
+53,UserVV,2025-06-15T12:10:00Z,Silent / Mindfulness,Ego Dissolution,7,"The world seemed to lose its solidity. I saw the energy behind the forms.",7.1,39.0,0.80,0.20,29,Intermediate
+54,UserWW,2025-06-15T12:15:00Z,Intention Setting,Non-Local Perception / Remote Viewing,9,"Received a distress signal from a family member who, as I later found out, had just had a fall.",8.6,48.0,0.69,0.17,57,Advanced
+55,UserXX,2025-06-15T12:20:00Z,"Binaural Beats (e.g., Hemi-Sync)",Deep Peace / Bliss,7,"The audio quality is important. These high-quality tracks lead to deeper states.",6.0,28.0,0.88,0.08,42,Beginner
+56,UserYY,2025-06-14T11:00:00Z,Silent / Mindfulness,None,2,"Just couldn't stop thinking about work. My mind was racing the whole time.",4.0,20.1,0.53,0.28,34,Intermediate
+57,UserZZ,2025-06-14T11:05:00Z,Psychedelic Experience,Ego Dissolution,10,"Complete and total loss of self. I became one with the cosmic joke. Incredibly liberating.",8.9,49.5,0.55,0.40,26,Advanced
+58,UserAAA,2025-06-14T11:10:00Z,"Binaural Beats (e.g., Hemi-Sync)",Out-of-Body Experience (OBE),8,"It took a while to get there, but I finally felt the shift and floated out. Saw my cat sleeping on the bed.",7.5,41.2,0.68,0.14,47,Intermediate
+59,UserBBB,2025-06-14T11:15:00Z,Guided Meditation,Lucid Dreaming,7,"The guidance was perfect for inducing a pre-dream state that I could carry into lucidity.",6.8,33.5,0.76,0.18,21,Beginner
+60,UserCCC,2025-06-14T11:20:00Z,Intention Setting,Deep Peace / Bliss,8,"I intended to forgive someone, and felt a huge weight lift from my shoulders, followed by peace.",6.5,29.5,0.93,0.06,50,Intermediate
+61,UserDDD,2025-06-13T10:00:00Z,"Binaural Beats (e.g., Hemi-Sync)",Out-of-Body Experience (OBE),9,"The feeling of leaving the body is unmistakable. It's like shedding a heavy coat.",7.9,43.8,0.64,0.12,38,Advanced
+62,UserEEE,2025-06-13T10:05:00Z,Guided Meditation,Deep Peace / Bliss,7,"My body went to sleep but my mind was awake and aware. Very restful.",6.1,26.8,0.90,0.07,43,Intermediate
+63,UserFFF,2025-06-13T10:10:00Z,Silent / Mindfulness,Ego Dissolution,6,"I watched my thoughts arise and pass away without identifying with them. This created a sense of distance and freedom.",7.0,38.1,0.79,0.22,30,Intermediate
+64,UserGGG,2025-06-13T10:15:00Z,Intention Setting,Non-Local Perception / Remote Viewing,7,"I got a flash of the number 73. Later that day, a new client's address was 73.",8.0,45.5,0.70,0.16,56,Advanced
+65,UserHHH,2025-06-13T10:20:00Z,"Binaural Beats (e.g., Hemi-Sync)",Lucid Dreaming,8,"The sounds create a very dream-like state. It's easy to become lucid from there.",7.1,36.5,0.77,0.15,25,Intermediate
+66,UserIII,2025-06-12T09:00:00Z,Psychedelic Experience,Ego Dissolution,9,"I experienced my own birth and death. Time became a loop.",8.4,47.8,0.60,0.34,32,Advanced
+67,UserJJJ,2025-06-12T09:05:00Z,"Binaural Beats (e.g., Hemi-Sync)",Out-of-Body Experience (OBE),10,"Traveled to a friend's apartment and saw they had bought a new plant. I described it to them and they were shocked.",8.2,46.0,0.62,0.11,39,Advanced
+68,UserKKK,2025-06-12T09:10:00Z,Guided Meditation,Deep Peace / Bliss,8,"The meditation focused on loving-kindness. I felt my heart open up.",6.4,28.9,0.94,0.04,59,Advanced
+69,UserLLL,2025-06-12T09:15:00Z,Silent / Mindfulness,None,4,"My allergies were acting up. Constant sneezing and sniffing. No chance to go deep.",4.3,21.8,0.59,0.24,28,Beginner
+70,UserMMM,2025-06-12T09:20:00Z,Intention Setting,Deep Peace / Bliss,7,"Set an intention for a peaceful day, and despite some challenges, I maintained my center.",6.3,28.2,0.89,0.07,41,Intermediate
+71,UserNNN,2025-06-11T08:00:00Z,"Binaural Beats (e.g., Hemi-Sync)",Lucid Dreaming,9,"Used the gateway track and found myself in a lucid dream where I could talk to my higher self.",7.3,37.0,0.78,0.16,33,Advanced
+72,UserOOO,2025-06-11T08:05:00Z,Silent / Mindfulness,Ego Dissolution,8,"The illusion of a separate self just shattered for a few minutes. Everything was interconnected.",7.4,39.8,0.81,0.19,45,Advanced
+73,UserPPP,2025-06-11T08:10:00Z,Intention Setting,Non-Local Perception / Remote Viewing,8,"I knew my phone was going to ring about 3 seconds before it did. And I knew who it was.",8.2,46.2,0.71,0.15,50,Advanced
+74,UserQQQ,2025-06-11T08:15:00Z,"Binaural Beats (e.g., Hemi-Sync)",Out-of-Body Experience (OBE),9,"The vibrations were almost overwhelming, but I relaxed into them and then I was out.",7.8,42.9,0.65,0.13,36,Intermediate
+75,UserRRR,2025-06-11T08:20:00Z,Guided Meditation,Deep Peace / Bliss,9,"Felt a sense of coming home. Like this peace was my true nature.",6.6,29.9,0.95,0.03,62,Advanced
+76,UserSSS,2025-06-10T07:00:00Z,Silent / Mindfulness,Deep Peace / Bliss,8,"Focused on my breath and the world disappeared. Just the rising and falling.",6.0,25.2,0.93,0.05,47,Intermediate
+77,UserTTT,2025-06-10T07:05:00Z,Psychedelic Experience,Out-of-Body Experience (OBE),9,"Felt myself lift off the couch and hover near the ceiling, observing the patterns on the rug.",7.9,44.0,0.66,0.29,31,Intermediate
+78,UserUUU,2025-06-10T07:10:00Z,"Binaural Beats (e.g., Hemi-Sync)",None,6,"Pleasant and relaxing, but didn't lead to any specific altered state this time.",5.4,24.0,0.81,0.11,27,Beginner
+79,UserVVV,2025-06-10T07:15:00Z,Intention Setting,Lucid Dreaming,8,"I intended to remember my dreams, and I recalled three vivid dreams in the morning.",6.7,34.2,0.74,0.17,40,Advanced
+80,UserWWW,2025-06-10T07:20:00Z,Guided Meditation,Deep Peace / Bliss,8,"The guide helped me scan my body and release tension I didn't even know I was holding.",6.2,27.5,0.91,0.06,55,Intermediate
+81,UserXXX,2025-06-09T06:00:00Z,"Binaural Beats (e.g., Hemi-Sync)",Out-of-Body Experience (OBE),9,"The key is to not get too excited when you feel the separation. Stay calm, and it unfolds.",7.7,42.2,0.67,0.14,39,Advanced
+82,UserYYY,2025-06-09T06:05:00Z,Silent / Mindfulness,Ego Dissolution,8,"I felt my consciousness expand beyond the walls of the room.",7.2,39.2,0.80,0.21,43,Intermediate
+83,UserZZZ,2025-06-09T06:10:00Z,Guided Meditation,None,5,"I found my mind wandering a lot. Need to practice more.",4.9,23.5,0.68,0.18,22,Beginner
+84,UserAAAA,2025-06-09T06:15:00Z,Intention Setting,Non-Local Perception / Remote Viewing,8,"I had a spontaneous vision of a waterfall, and my friend texted me a picture of one at that exact moment.",8.3,47.5,0.70,0.15,58,Advanced
+85,UserBBBB,2025-06-09T06:20:00Z,"Binaural Beats (e.g., Hemi-Sync)",Deep Peace / Bliss,7,"The sounds block out all external noise, making it easy to go inward.",5.9,27.8,0.89,0.08,34,Intermediate
+86,UserCCCC,2025-06-08T05:00:00Z,Psychedelic Experience,Ego Dissolution,10,"The universe experienced itself through me. It was not a personal experience.",9.0,50.0,0.54,0.42,29,Advanced
+87,UserDDDD,2025-06-08T05:05:00Z,Guided Meditation,Lucid Dreaming,8,"The guide's suggestions to check if I'm dreaming worked perfectly. Became lucid instantly.",7.0,35.5,0.77,0.17,35,Intermediate
+88,UserEEEE,2025-06-08T05:10:00Z,"Binaural Beats (e.g., Hemi-Sync)",Out-of-Body Experience (OBE),9,"Rolled out of my body and explored the neighborhood from above. It felt incredibly real.",8.0,44.5,0.64,0.12,48,Advanced
+89,UserFFFF,2025-06-08T05:15:00Z,Silent / Mindfulness,Deep Peace / Bliss,9,"A state of pure, thoughtless awareness. The most profound peace imaginable.",6.8,31.0,0.97,0.02,61,Advanced
+90,UserGGGG,2025-06-08T05:20:00Z,Intention Setting,None,6,"I set an intention, but got distracted by outside noises.",5.6,24.8,0.76,0.13,28,Beginner
+91,UserHHHH,2025-06-07T04:00:00Z,"Binaural Beats (e.g., Hemi-Sync)",Out-of-Body Experience (OBE),8,"My cat seemed to react to my non-physical presence. It looked right at the spot where I was floating.",7.7,42.0,0.67,0.14,37,Intermediate
+92,UserIIII,2025-06-07T04:05:00Z,Guided Meditation,Deep Peace / Bliss,8,"The visualization of light filling my body was very powerful.",6.3,28.3,0.92,0.06,52,Intermediate
+93,UserJJJJ,2025-06-07T04:10:00Z,Silent / Mindfulness,Ego Dissolution,7,"It felt like my mind was a radio and I just tuned out the 'self' station.",7.3,38.8,0.80,0.20,31,Advanced
+94,UserKKKK,2025-06-07T04:15:00Z,Intention Setting,Non-Local Perception / Remote Viewing,7,"I asked for a sign, and then saw three identical cars in a row, which is highly unusual.",8.1,45.8,0.72,0.16,53,Advanced
+95,UserLLLL,2025-06-07T04:20:00Z,"Binaural Beats (e.g., Hemi-Sync)",Lucid Dreaming,8,"The frequencies seem to activate the part of my brain responsible for lucidity.",7.0,36.0,0.78,0.16,26,Intermediate
+96,UserMMMM,2025-06-06T03:00:00Z,Psychedelic Experience,Deep Peace / Bliss,9,"After the peak, I felt a sense of clarity and purpose that has lasted for days.",6.6,32.0,0.86,0.14,35,Intermediate
+97,UserNNNN,2025-06-06T03:05:00Z,"Binaural Beats (e.g., Hemi-Sync)",Out-of-Body Experience (OBE),10,"Complete, vivid, and long-lasting OBE. I was able to verify details of a remote location.",8.3,46.5,0.61,0.10,42,Advanced
+98,UserOOOO,2025-06-06T03:10:00Z,Guided Meditation,None,2,"Fell asleep almost immediately. Woke up at the end.",4.0,20.0,0.55,0.16,24,Beginner
+99,UserPPPP,2025-06-06T03:15:00Z,Silent / Mindfulness,Deep Peace / Bliss,8,"The quiet was not empty, it was full. Full of peace.",5.9,26.9,0.94,0.04,51,Advanced
+100,UserQQQQ,2025-06-06T03:20:00Z,Intention Setting,Lucid Dreaming,8,"I intended to solve a problem in my dream, and woke up with the solution crystal clear in my mind.",7.1,35.2,0.76,0.18,39,Advanced`;
+
+// --- GLOBAL VARIABLES ---
+let fullData = [];
+let stateSpaceChart, biometricsChart;
+const colorMap = {}; // To store colors for each phenomenon
+
+// --- UTILITY FUNCTIONS ---
+/**
+ * Simple CSV to JSON parser
+ */
+function parseCSV(csv) {
+    const lines = csv.trim().split('\n');
+    const headers = lines[0].split(',');
+    const data = lines.slice(1).map(line => {
+        // This regex handles commas inside quoted strings
+        const values = line.match(/(".*?"|[^",]+)(?=\s*,|\s*$)/g).map(val => val.replace(/^"|"$/g, ''));
+        return headers.reduce((obj, header, i) => {
+            const value = values[i];
+            // Convert numerical strings to numbers
+            obj[header] = !isNaN(parseFloat(value)) && isFinite(value) ? parseFloat(value) : value;
+            return obj;
+        }, {});
+    });
+    return data;
+}
+
+/**
+ * Generates a random HSL color for consistent category coloring
+ */
+function generateColor(str) {
+    if (!colorMap[str]) {
+        let hash = 0;
+        for (let i = 0; i < str.length; i++) {
+            hash = str.charCodeAt(i) + ((hash << 5) - hash);
+        }
+        const h = hash % 360;
+        colorMap[str] = `hsla(${h}, 70%, 70%, 0.7)`;
+    }
+    return colorMap[str];
+}
+
+
+// --- DASHBOARD LOGIC ---
+document.addEventListener('DOMContentLoaded', () => {
+    fullData = parseCSV(csvData);
+    
+    populateFilters();
+    initializeCharts();
+    setupEventListeners();
+    
+    // Initial data load and render
+    updateDashboard();
+});
+
+/**
+ * Creates filter checkboxes from the dataset
+ */
+function populateFilters() {
+    const techniqueContainer = document.getElementById('technique-filters');
+    const phenomenonContainer = document.getElementById('phenomenon-filters');
+
+    const techniques = ['All', ...new Set(fullData.map(d => d.Technique))];
+    const phenomena = ['All', ...new Set(fullData.map(d => d.ReportedPhenomenon))];
+
+    techniques.forEach(item => {
+        const div = document.createElement('div');
+        div.innerHTML = `
+            <input type="checkbox" id="tech-${item}" name="technique" value="${item}" class="w-4 h-4 text-teal-600 bg-gray-700 border-gray-600 rounded focus:ring-teal-500" ${item === 'All' ? 'checked' : ''}>
+            <label for="tech-${item}" class="ml-2 text-gray-300">${item}</label>
+        `;
+        techniqueContainer.appendChild(div);
+    });
+
+    phenomena.forEach(item => {
+        const div = document.createElement('div');
+        div.innerHTML = `
+            <input type="checkbox" id="phenom-${item}" name="phenomenon" value="${item}" class="w-4 h-4 text-teal-600 bg-gray-700 border-gray-600 rounded focus:ring-teal-500" ${item === 'All' ? 'checked' : ''}>
+            <label for="phenom-${item}" class="ml-2 text-gray-300">${item}</label>
+        `;
+        phenomenonContainer.appendChild(div);
+    });
+}
+
+/**
+ * Initializes all Chart.js charts
+ */
+function initializeCharts() {
+    const stateSpaceCtx = document.getElementById('state-space-chart').getContext('2d');
+    stateSpaceChart = new Chart(stateSpaceCtx, {
+        type: 'bubble',
+        data: { datasets: [] },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                x: { title: { display: true, text: 'EEG Theta Power (μV²)' } },
+                y: { title: { display: true, text: 'EEG Gamma Power (μV²)' } }
+            },
+            plugins: {
+                legend: { position: 'bottom' },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            const d = context.raw;
+                            return `${d.phenomenon}: Intensity ${d.r/2}, Theta ${d.x}, Gamma ${d.y}`;
+                        }
+                    }
+                }
+            }
+        }
+    });
+
+    const biometricsCtx = document.getElementById('biometrics-chart').getContext('2d');
+    biometricsChart = new Chart(biometricsCtx, {
+        type: 'bar',
+        data: {
+            labels: ['Avg Theta', 'Avg Gamma', 'Avg HRV Coherence', 'Avg GSR Fluctuation'],
+            datasets: [{
+                label: 'Average Values',
+                data: [0,0,0,0],
+                backgroundColor: [
+                    'rgba(54, 162, 235, 0.6)',
+                    'rgba(255, 99, 132, 0.6)',
+                    'rgba(75, 192, 192, 0.6)',
+                    'rgba(255, 206, 86, 0.6)'
+                ],
+                borderColor: [
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(255, 99, 132, 1)',
+                    'rgba(75, 192, 192, 1)',
+                    'rgba(255, 206, 86, 1)'
+                ],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            indexAxis: 'y',
+            plugins: { legend: { display: false } },
+            scales: {
+                x: { beginAtZero: true }
+            }
+        }
+    });
+}
+
+/**
+ * Sets up event listeners for all filter controls
+ */
+function setupEventListeners() {
+    document.querySelectorAll('input[name="technique"], input[name="phenomenon"]').forEach(checkbox => {
+        checkbox.addEventListener('change', () => {
+             // Handle 'All' checkbox logic
+            const groupName = checkbox.name;
+            const container = checkbox.closest('div').parentElement;
+            if (checkbox.value === 'All' && checkbox.checked) {
+                container.querySelectorAll(`input[name="${groupName}"]`).forEach(cb => cb.checked = false);
+                checkbox.checked = true;
+            } else if (checkbox.value !== 'All' && checkbox.checked) {
+                container.querySelector(`input[value="All"]`).checked = false;
+            }
+
+            // If no checkboxes are checked, check 'All'
+            const checkedCount = container.querySelectorAll(`input[name="${groupName}"]:checked`).length;
+            if (checkedCount === 0) {
+                 container.querySelector(`input[value="All"]`).checked = true;
+            }
+
+            updateDashboard();
+        });
+    });
+
+    const intensitySlider = document.getElementById('intensity-slider');
+    intensitySlider.addEventListener('input', () => {
+        document.getElementById('intensity-value').textContent = intensitySlider.value;
+        updateDashboard();
+    });
+}
+
+
+/**
+ * Main function to filter data and update all visualizations
+ */
+function updateDashboard() {
+    // 1. Get current filter values
+    const selectedTechniques = Array.from(document.querySelectorAll('input[name="technique"]:checked')).map(cb => cb.value);
+    const selectedPhenomena = Array.from(document.querySelectorAll('input[name="phenomenon"]:checked')).map(cb => cb.value);
+    const minIntensity = parseFloat(document.getElementById('intensity-slider').value);
+
+    // 2. Filter the data
+    const filteredData = fullData.filter(d => {
+        const techniqueMatch = selectedTechniques.includes('All') || selectedTechniques.includes(d.Technique);
+        const phenomenonMatch = selectedPhenomena.includes('All') || selectedPhenomena.includes(d.ReportedPhenomenon);
+        const intensityMatch = d.ExperienceIntensity >= minIntensity;
+        return techniqueMatch && phenomenonMatch && intensityMatch;
+    });
+
+    // 3. Update all components with the filtered data
+    updateGlobalMetrics(filteredData);
+    updateStateSpaceChart(filteredData);
+    updateBiometricsChart(filteredData);
+    updateWordCloud(filteredData);
+}
+
+/**
+ * Updates the Global Metrics card
+ */
+function updateGlobalMetrics(data) {
+    document.getElementById('total-experiences').textContent = data.length.toLocaleString();
+    // Assuming each session is ~15 minutes (0.25 hours) for a rough estimate
+    document.getElementById('hours-logged').textContent = (data.length * 0.25).toLocaleString(undefined, { maximumFractionDigits: 0 });
+    const uniqueUsers = new Set(data.map(d => d.UserID)).size;
+    document.getElementById('active-explorers').textContent = uniqueUsers.toLocaleString();
+}
+
+/**
+ * Updates the State-Space (Bubble) Chart
+ */
+function updateStateSpaceChart(data) {
+    const dataByPhenomenon = data.reduce((acc, d) => {
+        const key = d.ReportedPhenomenon;
+        if (!acc[key]) {
+            acc[key] = {
+                label: key,
+                data: [],
+                backgroundColor: generateColor(key)
+            };
+        }
+        acc[key].data.push({
+            x: d.EEG_Theta,
+            y: d.EEG_Gamma,
+            r: d.ExperienceIntensity * 2, // Scale radius for better visibility
+            phenomenon: key
+        });
+        return acc;
+    }, {});
+
+    stateSpaceChart.data.datasets = Object.values(dataByPhenomenon);
+    stateSpaceChart.update();
+}
+
+/**
+ * Updates the Biometrics Bar Chart
+ */
+function updateBiometricsChart(data) {
+    if (data.length === 0) {
+        biometricsChart.data.datasets[0].data = [0, 0, 0, 0];
+        biometricsChart.update();
+        return;
+    }
+
+    const avg = (arr, prop) => arr.reduce((sum, item) => sum + item[prop], 0) / arr.length;
+    
+    const avgTheta = avg(data, 'EEG_Theta');
+    const avgGamma = avg(data, 'EEG_Gamma');
+    const avgHRV = avg(data, 'HRV_Coherence');
+    const avgGSR = avg(data, 'GSR_Fluctuation');
+    
+    biometricsChart.data.datasets[0].data = [avgTheta, avgGamma, avgHRV, avgGSR];
+    biometricsChart.update();
+}
+
+/**
+ * Updates the Word Cloud
+ */
+function updateWordCloud(data) {
+    const wordCloudContainer = document.getElementById('word-cloud');
+    wordCloudContainer.innerHTML = ''; // Clear previous words
+
+    if (data.length === 0) {
+        wordCloudContainer.innerHTML = '<p class="text-gray-400">No data for this selection.</p>';
+        return;
+    }
+    
+    const wordCounts = {};
+    const stopWords = new Set(['a', 'an', 'the', 'and', 'but', 'or', 'to', 'of', 'in', 'on', 'was', 'i', 'it', 'my', 'me', 'for', 'with', 'felt', 'then', 'about', 'just', 'that', 'very', 'like', 'had']);
+
+    data.forEach(d => {
+        const words = d.NarrativeLog.toLowerCase().replace(/[.,]/g, '').split(/\s+/);
+        words.forEach(word => {
+            if (word && !stopWords.has(word)) {
+                wordCounts[word] = (wordCounts[word] || 0) + 1;
+            }
+        });
+    });
+
+    const sortedWords = Object.entries(wordCounts)
+        .sort((a, b) => b[1] - a[1])
+        .slice(0, 30); // Limit to top 30 words
+
+    if (sortedWords.length === 0) {
+        wordCloudContainer.innerHTML = '<p class="text-gray-400">No narrative logs for this selection.</p>';
+        return;
+    }
+
+    const maxCount = sortedWords[0][1];
+    
+    sortedWords.forEach(([word, count]) => {
+        const el = document.createElement('span');
+        const size = 1 + (count / maxCount) * 1.5; // Font size from 1rem to 2.5rem
+        const opacity = 0.6 + (count / maxCount) * 0.4;
+        el.textContent = word;
+        el.style.fontSize = `${size}rem`;
+        el.style.opacity = opacity;
+        el.className = 'p-1 leading-none';
+        wordCloudContainer.appendChild(el);
+    });
+}
+
+</script>
+</body>
+</html>
