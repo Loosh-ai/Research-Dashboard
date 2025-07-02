@@ -1,13 +1,13 @@
-Loosh.ai Research Partner Dashboard
-Overview
-This project is an interactive, web-based dashboard designed to showcase Loosh.ai's capability to correlate subjective, phenomenological reports with objective neuro-biometric data. It serves as a powerful demonstration tool for potential research partners by visualizing complex consciousness data in an intuitive and compelling way.
+<b>Loosh.ai Research Partner Dashboard</b><br>
+Overview<br>
+This project is an interactive, web-based dashboard designed to showcase Loosh.ai's capability to correlate subjective, phenomenological reports with objective neuro-biometric data. It serves as a powerful demonstration tool for potential research partners by visualizing complex consciousness data in an intuitive and compelling way.<br>
 
-The dashboard is built as a single, self-contained index.html file, making it easy to share, view, and deploy without requiring a complex server setup.
+The dashboard is built as a single, self-contained index.html file, making it easy to share, view, and deploy without requiring a complex server setup.<br>
 
-Live Demo: https://loosh-ai.github.io/Research-Dashboard
+Live Demo: https://loosh-ai.github.io/Research-Dashboard<br>
 
-Features
-Interactive Filtering: Users can dynamically filter the dataset by technique, reported phenomenon, and experience intensity.
+<b>Features</b><br>
+Interactive Filtering: Users can dynamically filter the dataset by technique, reported phenomenon, and experience intensity.<br>
 
 Glassmorphic UI: A modern, visually appealing design using glassmorphism principles for a clean, futuristic look.
 
