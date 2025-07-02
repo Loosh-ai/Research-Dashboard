@@ -1,15 +1,11 @@
-<b>Loosh.ai Research Partner Dashboard</b><br>
-Overview<br>
-This project is an interactive, web-based dashboard designed to showcase Loosh.ai's capability to correlate subjective, phenomenological reports with objective neuro-biometric data. It serves as a powerful demonstration tool for potential research partners by visualizing complex consciousness data in an intuitive and compelling way.<br>
 
-The dashboard is built as a single, self-contained index.html file, making it easy to share, view, and deploy without requiring a complex server setup.<br>
+<b>Overview</b><br>
+This is an interactive, web-based dashboard designed to showcase Loosh.ai's capability to correlate subjective, phenomenological reports with objective neuro-biometric data. It serves as a powerful demonstration tool for potential research partners by visualizing complex consciousness data in an intuitive and compelling way.<br>
 
 Live Demo: https://loosh-ai.github.io/Research-Dashboard<br>
 
 <b>Features</b><br>
 Interactive Filtering: Users can dynamically filter the dataset by technique, reported phenomenon, and experience intensity.<br>
-
-Glassmorphic UI: A modern, visually appealing design using glassmorphism principles for a clean, futuristic look.
 
 Dynamic Charting: Utilizes Chart.js to render three main visualizations that update in real-time:
 
@@ -18,10 +14,6 @@ Consciousness State-Space: A bubble chart mapping experiences based on EEG Theta
 Aggregate Neuro-Biometrics: A bar chart showing the average biometric values for the filtered data.
 
 Subjective Experience Cloud: A dynamically generated word cloud from user narrative logs.
-
-Responsive Design: The layout adapts smoothly to various screen sizes, from mobile devices to large desktop monitors.
-
-No Dependencies: Runs entirely in the browser with no need for server-side processing or local installation.
 
 <b>Technology Stack</b><br>
 HTML5: The core structure of the document.
@@ -35,9 +27,8 @@ Chart.js: A powerful and flexible library for creating the interactive data visu
 Google Fonts: Used for the 'Inter' font family for a clean and readable typeface.
 
 <b>How It Works</b><br>
-The entire application is self-contained within the index.html file.
 
-Filter Population: The script dynamically generates the filter checkboxes based on the unique Technique and ReportedPhenomenon values found in the dataset.
+Filter Population: The script dynamically generates the filter checkboxes based on the unique Technique and Reported Phenomenon values found in the dataset.
 
 Chart Initialization: The three Chart.js charts are initialized with their respective configurations.
 
