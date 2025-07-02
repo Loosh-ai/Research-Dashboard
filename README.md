@@ -23,7 +23,7 @@ Responsive Design: The layout adapts smoothly to various screen sizes, from mobi
 
 No Dependencies: Runs entirely in the browser with no need for server-side processing or local installation.
 
-<b>Technology Stack</b>
+<b>Technology Stack</b><br>
 HTML5: The core structure of the document.
 
 Tailwind CSS: A utility-first CSS framework for rapid UI development and responsive design.
@@ -34,7 +34,7 @@ Chart.js: A powerful and flexible library for creating the interactive data visu
 
 Google Fonts: Used for the 'Inter' font family for a clean and readable typeface.
 
-<b>How It Works</b>
+<b>How It Works</b><br>
 The entire application is self-contained within the index.html file.
 
 Filter Population: The script dynamically generates the filter checkboxes based on the unique Technique and ReportedPhenomenon values found in the dataset.
@@ -43,7 +43,7 @@ Chart Initialization: The three Chart.js charts are initialized with their respe
 
 Event Handling: Event listeners are attached to all filter controls (checkboxes and the intensity slider).
 
-<b>When a filter is changed:</b>
+<b>When a filter is changed:</b><br>
 
 The full dataset is filtered based on the currently selected criteria.
 
